@@ -1,40 +1,51 @@
 package com.example.footballapi.controller;
 
+import com.example.footballapi.model.Player;
 import com.example.footballapi.model.Team;
 import com.example.footballapi.service.TeamService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/teams")
+@RequestMapping("/teams")
 public class TeamController {
-
     private final TeamService teamService;
 
     public TeamController(TeamService teamService) {
         this.teamService = teamService;
     }
 
-    @GetMapping
-    public Page<Team> getTeams(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "name") String sortField,
-            @RequestParam(defaultValue = "ASC") String sortDirection) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection).and(Sort.by(sortField)));
-        return teamService.getTeams(pageable);
+    @PostMapping
+    public ResponseEntity<Team> createTeam(@RequestBody Team team) {
+        Team createdTeam = teamService.createTeam(team.getName(), team.getAcronym(), team.getBudget());
+        return new ResponseEntity<>(createdTeam, HttpStatus.CREATED);
     }
 
-    @PostMapping
-    public Team createTeam(@RequestBody Team team) {
-        return teamService.createTeam(team);
+    @PutMapping("/{id}")
+    public ResponseEntity<Team> updateTeam(@PathVariable Long id, @RequestBody Team team) {
+        Team updatedTeam = teamService.updateTeam(id, team.getName(), team.getAcronym(), team.getBudget());
+        if (updatedTeam != null) {
+            return new ResponseEntity<>(updatedTeam, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/{teamId}/players")
+    public ResponseEntity<Player> addPlayerToTeam(@PathVariable Long teamId, @RequestBody Player player) {
+        Player createdPlayer = teamService.addPlayerToTeam(teamId, player.getName(), player.getPosition());
+        return new ResponseEntity<>(createdPlayer, HttpStatus.CREATED);
     }
 }

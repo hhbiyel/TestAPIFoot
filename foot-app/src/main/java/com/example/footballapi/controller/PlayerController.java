@@ -19,32 +19,15 @@ import com.example.footballapi.service.PlayerService;
 @RestController
 @RequestMapping("/players")
 public class PlayerController {
-
     private final PlayerService playerService;
 
     public PlayerController(PlayerService playerService) {
         this.playerService = playerService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Player>> getAllPlayers() {
-        List<Player> players = playerService.getAllPlayers();
-        return new ResponseEntity<>(players, HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Player> getPlayerById(@PathVariable Long id) {
-        Player player = playerService.getPlayerById(id);
-        if (player != null) {
-            return new ResponseEntity<>(player, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
     @PostMapping
     public ResponseEntity<Player> createPlayer(@RequestBody Player player) {
-        Player createdPlayer = playerService.createPlayer(player.getName(), player.getPosition(), player.getTeam().getId());
+        Player createdPlayer = playerService.createPlayer(player.getName(), player.getPosition());
         return new ResponseEntity<>(createdPlayer, HttpStatus.CREATED);
     }
 
@@ -56,11 +39,5 @@ public class PlayerController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePlayer(@PathVariable Long id) {
-        playerService.deletePlayer(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
