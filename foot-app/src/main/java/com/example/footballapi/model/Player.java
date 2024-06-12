@@ -16,9 +16,21 @@ public class Player {
     private Long id;
     private String name;
     private String position;
-    @ManyToOne
-    @JoinColumn(name = "team_id")
-    private Team team;
+    
+    public Player() {
+    }
+    
+    public Player(String name, String position) {
+        this.name = name;
+        this.position = position;
+    }
+    
+    public Player(Long id, String name, String position) {
+        this.id = id;
+        this.name = name;
+        this.position = position;
+    }
+    
 	public Long getId() {
 		return id;
 	}

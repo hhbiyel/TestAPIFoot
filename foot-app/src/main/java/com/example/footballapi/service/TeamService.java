@@ -34,6 +34,7 @@ public class TeamService {
             team.setName(name);
             team.setAcronym(acronym);
             team.setBudget(budget);
+            team.setPlayers(new ArrayList<>());
             return teamRepository.save(team);
         }
         return null;
